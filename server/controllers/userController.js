@@ -71,7 +71,51 @@ const userController = {
         catch (err) {
             return res.status(500).json({ msg: err.message })
         }
+    },
+
+    login: async (req, res) => {
+        try {
+            const {email, password} = req.body;
+
+            const user = await Users.findOne({email});
+            if(!user)
+                return res.status(400).json({msg: "User does not exist"});
+
+            const isMatch = await bcrypt.compare(password,user.password);
+            if(!isMatch)
+                return res.status(400).json({msg: "Incorrect Password"});
+
+
+            const accessToken = createAccessToken({ id: user._id })
+            const refreshToken = createRefreshToken({ id: user._id })
+
+            // Store refresh token in a secure cookie
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                path: '/user/refresh_token'
+            })
+
+            res.json({
+                msg: "Login Success",
+                accessToken
+            });
+        } 
+        catch (err) {
+            return res.status(500).json({msg: err.message});
+        }
+    },
+
+    logout: async (req, res) => {
+        try {
+            res.clearCookie('refreshtoken',{path: "/user/refresh_token"});
+
+            return res.json({msg: "Logout"})    
+        } 
+        catch (err) {
+            return res.status(500).json({msg: err.message});
+        }
     }
+
 }
 
 //JWT tokens define
