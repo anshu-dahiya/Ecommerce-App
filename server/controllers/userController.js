@@ -114,6 +114,19 @@ const userController = {
         catch (err) {
             return res.status(500).json({msg: err.message});
         }
+    },
+
+    getUser: async (req, res) => {
+        try {
+            const user = await Users.findById(req.user.id);
+            if(!user)
+                return res.status(400).json({msg: "User not found"});
+
+            res.json(user);
+        } 
+        catch (err) {
+            return res.status(500).json({msg: err.message});           
+        }
     }
 
 }
