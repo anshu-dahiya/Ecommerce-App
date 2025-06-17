@@ -27,8 +27,8 @@ const userController = {
             await newUser.save();
 
             //create JWT tokens
-            const accessToken = createAccessToken({ id: newUser._id })
-            const refreshToken = createRefreshToken({ id: newUser._id })
+            const accessToken = createAccessToken({ _id: newUser._id })
+            const refreshToken = createRefreshToken({ _id: newUser._id })
 
             // Store refresh token in a secure cookie
             res.cookie('refreshToken', refreshToken, {
@@ -62,7 +62,7 @@ const userController = {
                     return res.status(400).json({ msg: 'Please Login or Register' });
 
                 // 4. Create a new access token
-                const accessToken = createAccessToken({ id: user.id });
+                const accessToken = createAccessToken({ _id: user.id });
                 
                 // 5. Send back the new access token
                 res.json({user,accessToken});
@@ -86,8 +86,8 @@ const userController = {
                 return res.status(400).json({msg: "Incorrect Password"});
 
 
-            const accessToken = createAccessToken({ id: user._id })
-            const refreshToken = createRefreshToken({ id: user._id })
+            const accessToken = createAccessToken({ _id: user._id })
+            const refreshToken = createRefreshToken({ _id: user._id })
 
             // Store refresh token in a secure cookie
             res.cookie('refreshToken', refreshToken, {
@@ -118,7 +118,7 @@ const userController = {
 
     getUser: async (req, res) => {
         try {
-            const user = await Users.findById(req.user.id);
+            const user = await Users.findById(req.user._id);
             if(!user)
                 return res.status(400).json({msg: "User not found"});
 
